@@ -137,9 +137,53 @@ resource "aws_instance" "app" {
 
 #### How does Terraform Work ?
 - Terraform is an opensource tool created by Hashicorp and written in Go programming language.
-# 2. Getting Started with Terraform
+- The Go code compiles down into a single binary. We can use this binary to deploy infrastructure from laptop or a build server 
+- Terraform binary makes API calls on behalf of us to one or more providers such as AWS, Azure, Google Cloud, Digital Ocean, Openstack etc. This means that terraform gets to leverage the infrastructure those providers are already running for their API servers, as well as the authentication mechanisms you're already using with those providers 
 
-# 3. How to Manage Terraform State
+**How does terraform knows what API calls to make ? 🤔** The answer for it was that we create Terraform configuration, which are text files which specify what infrastructure you want to create. Below is the example for Terraform configuration 
+
+```
+resource "aws_instance" "example" {
+  ami = "ami-0fb56kf8874f"
+  instance_type = "t2.micro"
+}
+```
+- Terraform allows you to deploy interconnected resources across multiple cloud providers.
+- The terraform binary parses your code, translates it into a series of API calls to the cloud providers specified in the code, and makes those API calls as efficiently as possible on your behalf.
+
+**Is Transparent Portability between cloud providers possible ?** no, because cloud providers don't offer exactly the same type of infrastructure. The functionality in one cloud doesnot exists exactly in the same way in another cloud providers.
+
+#### How Does Terraform Compare to Other IAC Tools ?
+
+Below are the main trade-offs to consider while selecting the tool :  
+1. Configuration Management vs Provisioning
+2. Mutuable Infrastructure vs Immutable Infrastructure
+3. Procedural Languages vs Declarative Languages
+4. Master vs Masterless
+5. Agent vs Agentless
+6. Paid vs Free offering
+7. Large community vs small community
+8. Mature vs Cutting-edge
+9. Use of Multiple Tools together
+
+## 2. Getting Started with Terraform
+- setting up your AWS account
+- Installing Terraform
+- Deploying a single server
+- Deploying a single web server
+- Deploying a configurable web server
+- Deploying a cluster of web servers
+- Deploying a load balancer
+
+
+## 3. How to Manage Terraform State
+- what is terraform state
+- shared storage for state files 
+- Limitations with Terraform's backends
+- State file isolation
+    - Isolation via workspaces
+    - Isolation via layout
+- The terraform_remote_state data source
 
 # 4. How to Create Reusable Infrastructure with Terraform Modules
 
