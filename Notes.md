@@ -299,10 +299,35 @@ resource "aws_security_group" "instance" {
 
 ```
 
-- A **datasource** represents a piece of read-only information that is fetched from  
+- A **datasource** represents a piece of read-only information that is fetched from provider everytime you run Terraform. Adding a  datasource to your terraform does not create anything new, its just a way to query the provider's APIs for data and make that data available to the rest of the terraform code. Each Terraform provider exposes a variety of data sources.
+
+- The syntax for using a datasource is simmilar to the syntax of a resource.
+
+data "<provider>_<type>" "Name" {
+  [CONFIG...]
+}
+ 
+ - To get the data out of a datasource, you use the following attribute reference syntax:
+ `data.<provider>_<type>.<Name>.<Attribute>`
+ - To get ID of the VPC from the aws_vpc data source, you would use the following:
+ `data.aws_vpc.default.id`
 
 
 **Deploying a load balancer**
+- AWS offers 3 types of loadbalancers:
+1. **Application Load Balancer (ALB)**: Best for load balancing of HTTP and HTTPS traffic. Operates at the application layer (layer 7) of the open systems interconnection (OSI) model.
+
+2. **Network Load Balancer (NLB)**: Best suited for load balancing of TCP, UDP and TLS traffic. can scale up and down in response to load faster than the ALB (NLB is designed to scale to tens of millions of requests per second). Operates at the transport layer (layer 4) of the OSI model
+
+3. **Classic Load Balancer (CLB)**: This is legacy loadbalancer that predates the both ALB and NLB. It can handle HTTP, HTTPS, TCP, TLS Traffic but with far fewer features than either ALB or NLB. Operates at the both application layer (layer 7) and transport layer (layer 4) of the OSI Model.
+
+``` 
+ALB Loadbalancer constitutes:
+-----------------------------
+1. Listener: Listens on specific port (e.g;80) and protocol(e.g:HTTP)
+2. Listener Rule : Takes requests that come into a listener and sends those that match specific paths (e.g: /foo and /bar) or hostnames (e.g: foo.example.com and bar.example.com) to specific target groups
+3. Target groups: one or more servers that receive requests from the load balancer. The target group also performs health checks on these servers and sends requests only to healthy nodes.
+```
 
 
 ## 3. How to Manage Terraform State
