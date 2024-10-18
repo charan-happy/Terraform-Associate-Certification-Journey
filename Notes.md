@@ -175,6 +175,135 @@ Below are the main trade-offs to consider while selecting the tool :
 - Deploying a cluster of web servers
 - Deploying a load balancer
 
+**Deploying a single server**
+- For each type of provider, there are many different kinds of resources that you can create, such as servers, databases and loadbalancers. The general sytax for creating a resource in Terraform as follows:
+```
+resource "<provider>_<type>" "<Name>" {
+  [CONFIG...]
+}
+```
+- An expression in terraform is anything that returns a value. Simplest type of expressions, literals such as strings (ex: "ami-xvxxx") and numbers (ex: 8). Terraform supports many other types of expressions. 
+- One particularly useful type of expression is a `reference` which allows you to access values from other parts of your code. 
+Ex: To access the ID of the security group resource, you are going to need to use a resource attribute reference, which uses the following syntax : `<provider>_<type>.<Name>.<Attribute>`
+```
+Network security
+---------------
+- A vpc is partitioned into one or more subnets, each with its own IP addresses. The subnets in Default VPC are all public subnets, which means they get IP addresses that are accessible from the public internet. 
+```
+
+**Deploying a single web server**
+- To allow you to make your code more DRY and more configurable. Terraform allows you to define `input variables`, Here is the syntax for declaring a variable:
+
+```
+variable "NAME" {
+  [CONFIG...]
+}
+```
+
+Optional Parameters in Terraform variable are as follows:
+
+1. Description
+2. Default
+3. Type
+4. Validation
+5. Sensitive
+
+```hcl
+variable "number_example" {
+  description = "An example of number variable in Terraform"
+  type = number
+  default = 34
+}
+
+
+variable "list_example" {
+  description = "An example of a list in Terraform"
+  type = List
+  default = ["a", "b", "c"]
+}
+
+variable "list_numeric_example" {
+  description = "An example of a numeric list in Terraform"
+  type = list(string)
+  default = ["1", "2", "3"]
+}
+
+variable "map_example" {
+  description = "An example of a map in Terraform"
+  type = map(string)
+
+  default = {
+    key1 = "value1"
+    key2 = "value2"
+    key3 = "value3"
+  }
+}
+
+variable "object_example" {
+  description = "An example of a structural type in Terraform"
+  type = object({
+    name = string
+    age = number
+    tags = list(string)
+    enabled = bool
+  })
+
+  default = {
+    name = "value1"
+    age = "43"
+    tags = ["a", "b", "c"]
+    enabled = true
+  }
+}
+```
+
+```
+variables as input parameters ways:
+-------------------------------
+1. if we don't give default value in variable file then it will prompt us to enter the value
+2. -var command line option ex: `terraform plan -var "server_port=8080`
+3. via environmental variable TF_VAR_<Name>ex: export TF_VAR_server_port=8080
+4. Default value in variable file
+```
+- `Interpolation` is one of the type in terraform expression, which takes any valid reference within curly braces and terraform will convert it into a string.
+
+
+**Deploying a configurable web server**
+
+**Deploying a cluster of web servers**
+```
+resource "aws_launch_configuration" "example" {
+  ami = "ami-0866a3c8686eaeeba"
+  instance_type = "t2.micro"
+  vpc_security_group_ids = [aws_security_group.instance.id]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              echo "Hello, World" > index.html
+              nohup busybox httpd -f -p ${var.server_port} &
+              EOF
+  user_data_replace_on_change = true
+}
+
+resource "aws_security_group" "instance" {
+  name = "terraform-example-instance"
+
+  ingress {
+    from_port = var.server_port
+    to_port = var.server_port
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+```
+
+- A **datasource** represents a piece of read-only information that is fetched from  
+
+
+**Deploying a load balancer**
+
 
 ## 3. How to Manage Terraform State
 - what is terraform state
