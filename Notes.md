@@ -339,6 +339,34 @@ ALB Loadbalancer constitutes:
     - Isolation via layout
 - The terraform_remote_state data source
 
+**what is terraform state ?**
+- Everytime you run terraform, it records information about what infrastructure it created in a terraform state file. 
+- The extension for terraform state file will be ".tfstate".
+- these '.tfstate' extension file consists a custom JSON format that records a mapping from the terraform resources in your configuration files to the representation of those resources in the real world.
+
+
+**shared storage for state files**
+- Storing Terraform state file in version control is a bad idea. Due to following reasions :
+1. Manual error
+2. Locking 
+3. secrets
+
+instead of using version control, the best way to manage shared storage for state files is to use Terraform's built-in support for remote backends. 
+- A terraform's backend determines how terraform loads and stores state. The default backend is **local backend** which stores the state file on your local disk
+- **Remote backends** allows you to store the state file in a remote, shared store ex: Amazon S3, Azure storage, google cloud storage and Hashicorp's terraform cloud and Terraform enterprise
+
+- Remote backends solves the manual errors, locking, secrets issues. 
+
+if we are using AWS as a cloud then AWS S3 is the best bet for remote backends. Due to below reasons
+- It is managed service. So, we don't need to deploy and manage extra infrastructure to use it
+- It is designed for 99.999999% durability and 99.99% availability
+
+**Limitations with Terraform's backends**
+
+**state file isolation**
+
+**The terrraform_remote_state datasource**
+
 # 4. How to Create Reusable Infrastructure with Terraform Modules
 
 # 5. Terraform Tips & Tricks: Loops, if-statements, Deployment and Gotchas
