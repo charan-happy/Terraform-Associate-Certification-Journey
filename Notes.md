@@ -359,7 +359,15 @@ instead of using version control, the best way to manage shared storage for stat
 
 if we are using AWS as a cloud then AWS S3 is the best bet for remote backends. Due to below reasons
 - It is managed service. So, we don't need to deploy and manage extra infrastructure to use it
-- It is designed for 99.999999% durability and 99.99% availability
+- It is designed for 99.999999% durability and 99.99% availability. Which means you don't need to worry too much about data loss or outages
+- It supports encryption, which reduces worries about storing sensitive data in state files. you still have to be very careful who on your team can access the S3 bucket, but atleast the data will be encrypted at rest(Amazon S3 supports server-side encryption using AES-256) and in transit (Terraform uses TLS when talking to Amazon s3)
+- It supports locking via DynamoDB
+- It supports versioning. So every revision of your state file is stored, and you can roll back to an older version if something goes wrong
+- It's Inexpensive, with most Terraform usage easily fitting into the AWS Free Tier 
+
+- **DynamoDB** is Amazon's distribution key-value store. It supports strongly consistent reads and conditional writes, which are all the ingredients you need for a distributed lock system. Moreover, it's completely managed, so you don't have any infrastructure to run yourself, and it's inexpensive, with most Terraform usage easily fitting into the AWS Free Tier.
+
+
 
 **Limitations with Terraform's backends**
 
