@@ -371,6 +371,28 @@ if we are using AWS as a cloud then AWS S3 is the best bet for remote backends. 
 
 **Limitations with Terraform's backends**
 
+There are 2 limitations in the terraform's backend. Which are listed below :
+
+i) Two-step Process to delete S3 bucket and DynamoDB
+
+1. To delete S3 bucket and DynamoDB table, you'd have to do this two-step process i.e; removing backend configuration in terraform's code and run terraform init to copy the terraform state back to your local disk.
+
+2. Run terraform destroy to delete S3 bucket and DynamoDB table 
+
+ii) No variable reference in the backend block
+
+```
+terraform {
+  backend "s3" {
+    bucket = var.bucket
+    region = var.region
+    dynamodb_table = var.dynamodb_table
+    key = "example/terraform.tfstate"
+    encrypt = true
+  }
+}
+```
+
 **state file isolation**
 
 **The terrraform_remote_state datasource**
